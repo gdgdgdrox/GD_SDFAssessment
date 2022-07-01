@@ -2,7 +2,6 @@ package GD;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class MailMerge{
         }
 
         //Converting .csv into a 2D array
+            //column major order
         List<List<String>> list = new ArrayList<List<String>>();
         BufferedReader br = new BufferedReader(new FileReader(csvFile));
         String line = br.readLine();
@@ -38,44 +38,49 @@ public class MailMerge{
         }
         br.close();
         int rows = list.size();
-        int cols = list.get(0).size();
+        int cols = list.get(0).size(); 
         String[][] csv2DArray = new String[rows][cols];
         for(int row = 0; row < rows; row++) {
             for(int col = 0; col < cols; col++) {
                 csv2DArray[row][col] = list.get(row).get(col);
             }
         }
-        System.out.println(Arrays.deepToString(csv2DArray));
-        
 
-        //Converting .txt into a String[]
+        //Converting template into a String array
+        Scanner scan = new Scanner(new FileReader(template));
         List<String> listOfStrings = new ArrayList<String>();
-        Scanner scan = new Scanner(template);
-        //BufferedReader br2 = new BufferedReader(new FileReader(template));
-        scan.useDelimiter(" ");
-        
-        while (scan.hasNextLine()){
-            listOfStrings.add(scan.next());
+        String str;
+        while (scan.hasNext()){
+            str = scan.next();
+            listOfStrings.add(str);
         }
-        scan.close();
+        System.out.println(listOfStrings);
+
         String[] templateArray = listOfStrings.toArray(new String[0]);
-        System.out.println(Arrays.toString(templateArray));
-        System.out.println(templateArray.length);
 
-        //Compare the variable name of CSV file against the template
-
-
-        /*for (int j=0; j<csv2DArray[0].length; j++){
-            for (int k=0; k<templateArray.length k++){
-                if (csv2DArray[0][j].equals("_" + templateArray[k] + "_")){
-                    templateArray[k] = csv2DArray[j+1][j];
+        //Compare the variable name of CSV file against the template and substitution            
+        for (int i = 0; i < templateArray.length; i++){
+            for (int j = 0; j < csv2DArray.length; j++){
+                if (templateArray[i].contains(csv2DArray[j][0])){
+                    templateArray[i] = csv2DArray[j][j+1];
                 }
             }
-        }*/
+        }
+        System.out.println(Arrays.toString(templateArray));
+        
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < templateArray.length; i++) {
+            sb.append(templateArray[i]);
+        }
+        String mailString = sb.toString();
+        System.out.println(mailString);
+        
+        
+
 
         
     }
-
 }
 
-//public static void printMail (String[][] data, String[])
+
+
